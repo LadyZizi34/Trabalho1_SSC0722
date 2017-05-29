@@ -61,17 +61,42 @@ class parserCTL():
 					return -1
 				
 
-
-	
-
 	def leExpressao(self, exp, pos):
 		expressao = ""
-		while(exp(pos) != '(')
-			expressao += exp(i)
+		while(exp[pos] != '('):
+			expressao += exp[i]
 			pos++
 		return expressao
 
 	def lePropriedade(self, exp, pos):
-		propriedade = ""
-		count = 
+		propriedade = "("
+		contador = 1
+		pos++
+		while(contador != 0):
+			propriedade += exp[pos]
+			if(exp[pos] == '('):
+				contador++
+			else if(exp[pos] == ')'):
+				contador--
+		return propriedade
 
+	def converte_ax_ex(self, string):
+		return "(!(EX(!" + string + ")))"
+
+	def converte_ef_eu(self, string):
+		return "(EU((TRUE)," + string + "))"
+
+	def converte_ag_eu(self, string):
+		return "(!(EU((TRUE),(!" + string + "))))"
+
+	def converte_eg_af(self, string):
+		return "(!(AF(!" + string + ")))"
+
+	def converte_au_afeu(self, esquerda, direita):
+		return "((AF" + direita + ")&(!(EU((!" + direita + "),((!" + esquerda + ")&(!" + direita + "))))))"
+
+	def converte_impsimples(self, esquerda, direita):
+		return "((!" + esquerda + ")|" + direita + ")"
+
+	def converte_impduplo(self, esquerda, direita):
+		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"

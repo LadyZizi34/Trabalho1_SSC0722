@@ -34,3 +34,14 @@ class parserCTL():
 			else:
 				while 
 
+	def leExpressao(self, exp, pos):
+		expressao = ""
+		while(exp(pos) != '(')
+			expressao += exp(i)
+			pos++
+		return expressao
+
+	def lePropriedade(self, exp, pos):
+		propriedade = ""
+		count = 
+

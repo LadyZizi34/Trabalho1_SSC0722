@@ -35,10 +35,36 @@ class parserCTL():
 		while (exp[pos] != '('):
 			operador += exp[pos]
 			pos += 1
-		print (operador)
+		
+
+		print (operador) ###################
+
+		# Le os operadores e analisa a expressao sobre a
+		# qual atuam. Operadores AX, EF, AG, EG, AU, ->
+		# e <-> são substituidos por seus equivalentes, de
+		# forma que estes operadores não estarão presentes
+		# na expressão final. O índice de posição passa a
+		# apontar para o restante da expressão.
+
+		if (operador == "AX"):
+			pos +=2 
+			self.leftExp = 	lePropriedade(exp, pos)
+			
+
+		elif (operador == "EF"):
+
+		elif (operador == "AG"):
+
+		elif (operador == "EG"):
+
+		elif (operador == "AU"):
+
+		elif (operador == "->"):
+
+		elif (operador == "<->"):
 
 
-
+			print (out)
 		
 
 

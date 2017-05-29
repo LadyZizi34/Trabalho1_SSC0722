@@ -32,12 +32,12 @@ class parserCTL():
 
 		# Le próximo operador
 		operador = ""		
-		while (exp[pos] != '('):
-			operador += exp[pos]
-			pos += 1
-		
+		i = pos
+		while (exp[i] != '('):
+			operador += exp[i]
+			i += 1
 
-		print (operador) ###################
+		print (operador, pos) ###################
 
 		# Le os operadores e analisa a expressao sobre a
 		# qual atuam. Operadores AX, EF, AG, EG, AU, ->
@@ -46,22 +46,38 @@ class parserCTL():
 		# na expressão final. O índice de posição passa a
 		# apontar para o restante da expressão.
 
-		if (operador == "AX"):
-			pos +=2 
-			self.leftExp = 	lePropriedade(exp, pos)
-			
-
+		if (operador == "AX"):			
+			pos +=2 			
+			#self.leftExp = lePropriedade(exp, pos)
+			exp = "(!(EX(!" + self.lePropriedade(exp, pos) + ")))"
+			operador = "!" # Novo último operador
+			pos = 1 # Índice aponta para o restante da expressão			
+	
 		elif (operador == "EF"):
+			pos += 2
+			exp = "(EU((TRUE)," + self.lePropriedade(exp, pos) + "))"
+			operador = "EU"
+			pos = 1
 
 		elif (operador == "AG"):
+			pos += 2
+			exp = "(!(EU((TRUE),(!" + self.lePropriedade(exp, pos) + "))))"
+			operador = "!"
+			pos = 1			
 
 		elif (operador == "EG"):
+			pos += 2
+			exp = "(!(AF(!" + self.lePropriedade(exp, pos) + ")))"
+			operador = "!"
+			pos = 1	
 
 		elif (operador == "AU"):
+			pos
 
 		elif (operador == "->"):
 
 		elif (operador == "<->"):
+
 
 
 			print (out)
@@ -83,6 +99,14 @@ class parserCTL():
 			exit(1)
 
 
+	def converte_impsimples(self, esquerda, direita):
+		return "((!" + esquerda + ")|" + direita + ")"
+
+	def converte_impduplo(self, esquerda, direita):
+		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"				
+			
+	
+	
 	# Retorna posição do próximo operador da expressão. Caso
 	# essa expresão seja uma propriedade (nó folha), retorna -1
 	def identificaExpressao(self, exp):
@@ -106,40 +130,27 @@ class parserCTL():
 						break
 					j += 1
 				if ((cont == 1) and not isProp):
+					print ('Find Func', i)
 					return i
 				else:
 					return -1
 
 
 
-	def leExpressao(self, exp, pos):
-		expressao = ""
-		while(exp[pos] != '('):
-			expressao += exp[i]
-			pos++
-		return expressao
-
 	def lePropriedade(self, exp, pos):
 		propriedade = "("
 		contador = 1
-		pos++
-		while(contador != 0):
+		pos += 1
+		while(contador != 0):			
 			propriedade += exp[pos]
 			if(exp[pos] == '('):
-				contador++
-			else if(exp[pos] == ')'):
-				contador--
+				contador += 1
+			elif(exp[pos] == ')'):
+				contador -= 1
+			pos += 1
 		return propriedade
 
-	def converte_ax_ex(self, string):
-		return "(!(EX(!" + string + ")))"
-
-	def converte_ef_eu(self, string):
-		return "(EU((TRUE)," + string + "))"
-
-	def converte_ag_eu(self, string):
-		return "(!(EU((TRUE),(!" + string + "))))"
-
+	
 	def converte_eg_af(self, string):
 		return "(!(AF(!" + string + ")))"
 
@@ -151,6 +162,4 @@ class parserCTL():
 
 	def converte_impduplo(self, esquerda, direita):
 		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"
-
-
 

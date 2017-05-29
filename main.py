@@ -2,6 +2,7 @@
 import sys
 from state_machine_reader import maqEstados
 from expression_parser import parserCTL
+from verifier import verificadorAvSintatica
 
 # Leitura do arquivo em um vetor de caracteres
 
@@ -20,19 +21,21 @@ expressao = arquivo[index]
 for y in range(len(arquivo)):     
 	print(arquivo[y])
 	
-#expressao = ''.join(parametros)
-print ('\nExpressao:', expressao, '\n')
-
 maquina = maqEstados()
 
 if not (maquina.leMaquina(arquivo)):
 	sys.exit("Máquina de Estados inválida.\n")
 
-parser = parserCTL()
-#verificacao parenteses: verifEstrutura(self, exp)
-parser.parse(expressao, 0)
+arvoreSintatica = parserCTL().parse(expressao)
+expressaoEquivalente = arvoreSintatica.expressao
+listaDeNos = []
 
+for i in reversed(range(0, int(len(arvoreSintatica.listaNos)))):
+	print (arvoreSintatica.listaNos[i].conteudo)
+	#listaDeNos.append(arvoreSintatica.listaNos[i])
 
+#verificador = verificadorAvSintatica(listaDeNos, maquina)
+#verificador.preenchePilha(arvoreSintatica.listaNos)
 
 
 

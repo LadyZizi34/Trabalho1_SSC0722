@@ -17,8 +17,9 @@ class parserCTL():
 		#self.rightExp = None
 		self.cont = 0 # Controle de abertura e fechamento de parenteses
 		self.listaNos = []
+		self.expressao = None
 
-	def parse(self, exp, pos):
+	def parse(self, exp):
 		
 		pos = self.identificaExpressao(exp)
 
@@ -28,7 +29,9 @@ class parserCTL():
 			noFolha = treeNode()
 			noFolha.tipo = 'Pr'
 			noFolha.conteudo = exp[1:(int(len(exp))-1)]
-			return noFolha
+			self.listaNos.append(noFolha)
+			self.expressao = exp
+			return self
 
 		# Le próximo operador
 		operador = ""		
@@ -93,7 +96,7 @@ class parserCTL():
 			expDireita = self.lePropriedade(exp, pos)
 			exp = "((!" + expEsquerda + ")|" + expDireita + ")"
 			operador = "|"
-			pos = self.identificaExpressao(exp)		
+			pos = self.identificaExpressao(exp)				
 
 		elif (operador == "<->"):
 			pos += 3
@@ -102,37 +105,69 @@ class parserCTL():
 			exp = "(((!" + expEsquerda + ")|" + expDireita + ")&((!" + expDireita + ")|" + expEsquerda + "))"				
 			operador = "&"
 			pos = self.identificaExpressao(exp)
-			print(exp)
 
-			print (out)
+		# Após feitas as devidas substituições por
+		# expressões equivalentes, analisa-se os opera-
+		# dores finais para encerrar o mapeamento da
+		# expressão lida em árvore sintática. Quando 
+		# um nó da árvore possui apenas um filho, 
+		# adota-se que este é seu filho esquerdo.
 
-
-
+		no = treeNode()
+		no.tipo = 'Op'
+		no.conteudo = exp
+		
 		if(operador == "EX"):
 			pos += 2
-			self.leftExp = lePropriedade(exp, pos)
+			expEsquerda = self.lePropriedade(exp, pos)								
+			no.left = self.parse(expEsquerda)			
 
-			
 		elif(operador == "AF"):
+			pos += 2
+			expEsquerda = self.lePropriedade(exp, pos)								
+			no.left = self.parse(expEsquerda)			
+
 		elif(operador == "EU"):
+			pos += 2
+			temp = self.lePropriedade(exp, pos)
+			virgula = self.identificaExpressao(temp)
+			expEsquerda = self.lePropriedade(temp, 1)
+			virgula += 1
+			expDireita = self.lePropriedade(temp, virgula)								
+			no.left = self.parse(expEsquerda)			
+			no.right = self.parse(expDireita)	
+									
 		elif(operador == "&"):
+			expEsquerda = self.lePropriedade(exp, 1)
+			pos += 1
+			expDireita = self.lePropriedade(exp, pos)					
+			no.left = self.parse(expEsquerda)
+			no.right = self.parse(expDireita)
+
 		elif(operador == "|"):
+			expEsquerda = self.lePropriedade(exp, 1)
+			pos += 1
+			expDireita = self.lePropriedade(exp, pos)					
+			no.left = self.parse(expEsquerda)
+			no.right = self.parse(expDireita)			
+
 		elif(operador == "!"):
+			pos += 1			
+			expEsquerda = self.lePropriedade(exp, pos)					
+			no.left = self.parse(expEsquerda)			
+
 		else:
-			print("Operador Invalido")
+			print("Operador Invalido.")
 			exit(1)
 
-
-	def converte_impsimples(self, esquerda, direita):
-		return "((!" + esquerda + ")|" + direita + ")"
-
-	def converte_impduplo(self, esquerda, direita):
-		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"				
-			
+		self.listaNos.append(no)
+		self.expressao = exp
+		return self
 	
-	
+
 	# Retorna posição do próximo operador da expressão. Caso
 	# essa expresão seja uma propriedade (nó folha), retorna -1
+
 	def identificaExpressao(self, exp):
 		cont = 0
 		isProp = False
@@ -159,6 +194,7 @@ class parserCTL():
 					return i
 		return -1
 
+	# Encontra propriedade a partir de uma posição
 	def lePropriedade(self, exp, pos):
 		propriedade = "("
 		contador = 1
@@ -171,17 +207,3 @@ class parserCTL():
 				contador -= 1
 			pos += 1
 		return propriedade
-
-	
-	def converte_eg_af(self, string):
-		return "(!(AF(!" + string + ")))"
-
-	def converte_au_afeu(self, esquerda, direita):
-		return "((AF" + direita + ")&(!(EU((!" + direita + "),((!" + esquerda + ")&(!" + direita + "))))))"
-
-	def converte_impsimples(self, esquerda, direita):
-		return "((!" + esquerda + ")|" + direita + ")"
-
-	def converte_impduplo(self, esquerda, direita):
-		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"
-

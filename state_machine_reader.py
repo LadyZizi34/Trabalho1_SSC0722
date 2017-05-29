@@ -62,8 +62,6 @@ class maqEstados(object):
 		print ('Matriz Propriedades:', matrizProps)
 		print ('Matriz Estados:', matrizEstados, '\n')
 
-		
-
 		return True
 
 

@@ -104,7 +104,30 @@ class parserCTL():
 			pos = self.identificaExpressao(exp)
 			print(exp)
 
+			print (out)
 
+
+
+		if(operador == "EX"):
+			pos += 2
+			self.leftExp = lePropriedade(exp, pos)
+
+			
+		elif(operador == "AF"):
+		elif(operador == "EU"):
+		elif(operador == "&"):
+		elif(operador == "|"):
+		elif(operador == "!"):
+		else:
+			print("Operador Invalido")
+			exit(1)
+
+
+	def converte_impsimples(self, esquerda, direita):
+		return "((!" + esquerda + ")|" + direita + ")"
+
+	def converte_impduplo(self, esquerda, direita):
+		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"				
 			
 	
 	
@@ -135,7 +158,6 @@ class parserCTL():
 				if not isProp:
 					return i
 		return -1
-				
 
 	def lePropriedade(self, exp, pos):
 		propriedade = "("
@@ -151,4 +173,15 @@ class parserCTL():
 		return propriedade
 
 	
+	def converte_eg_af(self, string):
+		return "(!(AF(!" + string + ")))"
+
+	def converte_au_afeu(self, esquerda, direita):
+		return "((AF" + direita + ")&(!(EU((!" + direita + "),((!" + esquerda + ")&(!" + direita + "))))))"
+
+	def converte_impsimples(self, esquerda, direita):
+		return "((!" + esquerda + ")|" + direita + ")"
+
+	def converte_impduplo(self, esquerda, direita):
+		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"
 

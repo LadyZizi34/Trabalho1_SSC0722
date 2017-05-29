@@ -65,7 +65,22 @@ class parserCTL():
 
 
 			print (out)
-		
+
+
+
+		if(operador == "EX"):
+			pos += 2
+			self.leftExp = lePropriedade(exp, pos)
+
+			
+		elif(operador == "AF"):
+		elif(operador == "EU"):
+		elif(operador == "&"):
+		elif(operador == "|"):
+		elif(operador == "!"):
+		else:
+			print("Operador Invalido")
+			exit(1)
 
 
 	# Retorna posição do próximo operador da expressão. Caso
@@ -94,7 +109,8 @@ class parserCTL():
 					return i
 				else:
 					return -1
-				
+
+
 
 	def leExpressao(self, exp, pos):
 		expressao = ""
@@ -135,3 +151,6 @@ class parserCTL():
 
 	def converte_impduplo(self, esquerda, direita):
 		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"
+
+
+

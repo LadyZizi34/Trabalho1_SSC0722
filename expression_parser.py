@@ -13,8 +13,8 @@ class treeNode(object):
 class parserCTL():
 
 	def __init__(self):
-		self.leftExp = None
-		self.rightExp = None
+		#self.leftExp = None
+		#self.rightExp = None
 		self.cont = 0 # Controle de abertura e fechamento de parenteses
 		self.listaNos = []
 
@@ -36,8 +36,6 @@ class parserCTL():
 		while (exp[i] != '('):
 			operador += exp[i]
 			i += 1
-
-		print (operador, pos) ###################
 
 		# Le os operadores e analisa a expressao sobre a
 		# qual atuam. Operadores AX, EF, AG, EG, AU, ->
@@ -71,22 +69,42 @@ class parserCTL():
 			operador = "!"
 			pos = 1	
 
+		# Há controle de posição do início da expressão e de 
+		# onde ocorre a vírgula que separa as duas expressões
+		# resultantes. Nas funções AU, -> e <->, precisa-se
+		# armazenar as expressões à esquerda e à direita da
+		# vírgula/operador para realizar a substituição pela
+		# expressão equivalente.
+
 		elif (operador == "AU"):
-			pos
+			pos += 2
+			temp = self.lePropriedade(exp, pos)
+			virgula = self.identificaExpressao(temp)
+			expEsquerda = self.lePropriedade(temp, 1)
+			virgula += 1
+			expDireita = self.lePropriedade(temp, virgula)
+			exp = "((AF" + expDireita + ")&(!(EU((!" + expDireita + "),((!" + expEsquerda + ")&(!" + expDireita + "))))))"
+			operador = "&"
+			pos = self.identificaExpressao(exp)
 
 		elif (operador == "->"):
+			pos += 2
+			expEsquerda = self.lePropriedade(exp, 1)
+			expDireita = self.lePropriedade(exp, pos)
+			exp = "((!" + expEsquerda + ")|" + expDireita + ")"
+			operador = "|"
+			pos = self.identificaExpressao(exp)		
 
 		elif (operador == "<->"):
+			pos += 3
+			expEsquerda = self.lePropriedade(exp, 1)
+			expDireita = self.lePropriedade(exp, pos)
+			exp = "(((!" + expEsquerda + ")|" + expDireita + ")&((!" + expDireita + ")|" + expEsquerda + "))"				
+			operador = "&"
+			pos = self.identificaExpressao(exp)
+			print(exp)
 
 
-	def converte_au_afeu(self, esquerda, direita):
-		return "((AF" + direita + ")&(!(EU((!" + direita + "),((!" + esquerda + ")&(!" + direita + "))))))"
-
-	def converte_impsimples(self, esquerda, direita):
-		return "((!" + esquerda + ")|" + direita + ")"
-
-	def converte_impduplo(self, esquerda, direita):
-		return "(((!" + esquerda + ")|" + direita + ")&((!" + direita + ")|" + esquerda + "))"				
 			
 	
 	
@@ -96,27 +114,27 @@ class parserCTL():
 		cont = 0
 		isProp = False
 		
-		for i in range(0, int(len(exp))):
+		for i in range(0, int(len(exp))):	
+
 			# Leitura de operadores básicos
 			if (exp[i] == '('):
 				cont += 1			
 			elif (exp[i] == ')'):
 				cont -= 1	
+
 			# Se encontrou algum parâmetro, verifica se
 			# é um operador (próximo parenteses abre) ou
 			# propriedade (próximo parenteses fecha)
-			else:
+			elif (cont == 1):			
 				j = i
 				while(exp[j] != '('):					
 					if (exp[j] == ')'):
 						isProp = True
 						break
 					j += 1
-				if ((cont == 1) and not isProp):
-					print ('Find Func', i)
+				if not isProp:
 					return i
-				else:
-					return -1
+		return -1
 				
 
 	def lePropriedade(self, exp, pos):

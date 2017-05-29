@@ -12,7 +12,7 @@ class treeNode(object):
 
 class parserCTL():
 
-	def __init__(self)
+	def __init__(self):
 		self.leftExp = None
 		self.rightExp = None
 		self.cont = 0 # Controle de abertura e fechamento de parenteses
@@ -20,7 +20,7 @@ class parserCTL():
 
 	def parse(self, exp, pos):
 		
-		pos = identificaExpressao(exp)
+		pos = self.identificaExpressao(exp)
 
 		# Cria nó do tipo Propriedade e 
 		# interrompe a recursão
@@ -29,6 +29,15 @@ class parserCTL():
 			noFolha.tipo = 'Pr'
 			noFolha.conteudo = exp[1:(int(len(exp))-1)]
 			return noFolha
+
+		# Le próximo operador
+		operador = ""		
+		while (exp[pos] != '('):
+			operador += exp[pos]
+			pos += 1
+		print (operador)
+
+
 
 		
 
@@ -64,14 +73,8 @@ class parserCTL():
 
 	
 
-	def leExpressao(self, exp, pos):
-		expressao = ""
-		while(exp(pos) != '(')
-			expressao += exp(i)
-			pos++
-		return expressao
 
-	def lePropriedade(self, exp, pos):
-		propriedade = ""
-		count = 
+	#def lePropriedade(self, exp, pos):
+	#	propriedade = ""
+	#	count = 
 

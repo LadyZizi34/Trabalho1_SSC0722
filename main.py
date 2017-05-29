@@ -28,9 +28,9 @@ maquina = maqEstados()
 if not (maquina.leMaquina(arquivo)):
 	sys.exit("Máquina de Estados inválida.\n")
 
-
+parser = parserCTL()
 #verificacao parenteses: verifEstrutura(self, exp)
-arvore = parserCTL.parse(expressao, 0)
+parser.parse(expressao, 0)
 
 
 

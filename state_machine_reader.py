@@ -51,8 +51,7 @@ class maqEstados(object):
 			else:
 				listaProxEstad = (arqArray[i+1][(pIndex + 2):(pIndex + (2*int(totProxEstad) + 3))]).split(' ')
 				if (len(listaProxEstad) > int(totProxEstad)): # Corta espaços extras
-					listaProxEstad = listaProxEstad[:int(totProxEstad)]
-				print("AA: ",arqArray[i+1][(pIndex + 2):(pIndex + (2*int(totProxEstad) + 3))], "B")
+					listaProxEstad = listaProxEstad[:int(totProxEstad)]				
 				
 				for j in listaProxEstad:
 					if (int(j) > totLinhas): # Checa se há estados acima do permitido

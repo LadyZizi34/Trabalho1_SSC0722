@@ -5,6 +5,7 @@ class treeNode(object):
 	def __init__(self):
 		self.tipo = None # Operador (Op) ou Propriedade (Pr)
 		self.conteudo = None
+		self.oper = None
 		self.rotulo = 0 #precisa??
 		self.left = None
 		self.right = None
@@ -22,16 +23,19 @@ class parserCTL():
 	def parse(self, exp):
 		
 		pos = self.identificaExpressao(exp)
+		no = treeNode()
 
 		# Cria nó do tipo Propriedade e 
 		# interrompe a recursão
-		if (pos == -1):			
-			noFolha = treeNode()
-			noFolha.tipo = 'Pr'
-			noFolha.conteudo = exp[1:(int(len(exp))-1)]
-			self.listaNos.append(noFolha)
+		if (pos == -1):						
+			no.tipo = 'Pr'
+			no.conteudo = exp[1:(int(len(exp))-1)]
+			no.oper = None
+			no.left = None
+			no.right = None
+			self.listaNos.append(no)
 			self.expressao = exp
-			return self
+			return no
 
 		# Le próximo operador
 		operador = ""		
@@ -116,6 +120,7 @@ class parserCTL():
 		no = treeNode()
 		no.tipo = 'Op'
 		no.conteudo = exp
+		no.oper = operador
 		
 		if(operador == "EX"):
 			pos += 2
@@ -162,7 +167,7 @@ class parserCTL():
 
 		self.listaNos.append(no)
 		self.expressao = exp
-		return self
+		return no
 	
 
 	# Retorna posição do próximo operador da expressão. Caso

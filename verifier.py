@@ -1,4 +1,5 @@
 # coding: utf-8
+from expression_parser import treeNode
 
 class verificadorAvSintatica(object):
 
@@ -6,28 +7,67 @@ class verificadorAvSintatica(object):
 		self.rotulos = int(len(nosArvore))
 		self.nos = nosArvore
 		self.estados = maq.listaEstados
-		self.pilha = []
+		self.pilha = []  ##nao uso?? ---------------
 
 	def preenchePilha(self, lista):
+
+		pilhaTemp = []
+		pilhaFinal = []
+		atual = treeNode()
+
+		print("Raiz:", lista[len(lista)-1].conteudo)
+
+		pilhaTemp.append(lista[len(lista)-1]) # Insere nó raiz
+		print(pilhaTemp)
+
+		print("Lista 0:",lista[0].conteudo)
 	# Primeiramente deve-se construir uma pilha onde
 	# o nó raiz esteja na base e os nós folha, no topo.
 	# Assim, será possível realizar a marcação 'de baixo
 	# para cima'
-		while lista:
-			atual = lista.pop()
-			self.pilha.insert(0,atual)
+		while pilhaTemp:
+			print("Lista:", pilhaTemp)
+			print("pop:", pilhaTemp[0])
+			atual = pilhaTemp.pop()
+			print("atual: ", atual)
+			print("Lista:", pilhaTemp)
+			print("atual.conteudo:",atual.conteudo)
+			pilhaFinal.append(atual)
 			if atual.left:
-				lista.insert(0,atual.left)
+				print("left:", atual.left)
+				pilhaTemp.append(atual.left)
 			if atual.right:
-				lista.insert(0,atual.right)
+				print("right:", atual)
+				pilhaTemp.append(atual.right)
 
+		print("A lista nova")
+		for i in (range(0, int(len(pilhaFinal)))):
+			print (pilhaFinal[i].conteudo)
 
-		for i in (range(0, int(len(self.pilha)))):
-			print (self.pilha[i].conteudo)
+		while pilhaFinal:
+			atual = pilhaFinal[len(pilhaFinal)-1]
+			print("Content:",atual.conteudo)
+			if (atual.tipo == 'Op'):
+				if(atual.oper == "EX"):
+					self.ex(self.estados, atual.left.conteudo, atual.conteudo)
+				elif(atual.oper == "AF"):
+					self.af(self.estados, atual.left.conteudo, atual.conteudo)
+				elif(atual.oper == "EU"):
+					self.eu(self.estados, atual.left.conteudo, atual.right.conteudo, atual.conteudo)					
+				elif(atual.oper == "!"):
+					self.op_not(self.estados, atual.left.conteudo, atual.conteudo)
+				elif(atual.oper == "&"):
+					self.op_and(self.estados, atual.left.conteudo, atual.right.conteudo, atual.conteudo)
+				elif(atual.oper == "|"):
+					self.op_or(self.estados, atual.left.conteudo, atual.right.conteudo, atual.conteudo)
+				else:
+					print("Máquina de Estados mal formada.")
+			else:
+				op_add(self.estados, atual.conteudo)
 
+			pilhaFinal.pop()
 
-
-	def af(parametro):		
+	def af(self, expLeft, exp):		
 		estadosParamValido = []
 		novaIteracao = 1
 

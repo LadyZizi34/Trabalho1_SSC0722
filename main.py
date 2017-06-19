@@ -21,21 +21,28 @@ expressao = arquivo[index]
 for y in range(len(arquivo)):     
 	print(arquivo[y])
 	
+print(" ")
 maquina = maqEstados()
 
 if not (maquina.leMaquina(arquivo)):
 	sys.exit("Máquina de Estados inválida.\n")
 
-arvoreSintatica = parserCTL().parse(expressao)
+print("Expressao:", expressao)
+arvoreSintatica = parserCTL()
+arvoreSintatica.parse(expressao)
 expressaoEquivalente = arvoreSintatica.expressao
 listaDeNos = []
 
+print("\nArvore:")
 for i in reversed(range(0, int(len(arvoreSintatica.listaNos)))):
 	print (arvoreSintatica.listaNos[i].conteudo)
 	#listaDeNos.append(arvoreSintatica.listaNos[i])
 
-#verificador = verificadorAvSintatica(listaDeNos, maquina)
-#verificador.preenchePilha(arvoreSintatica.listaNos)
+print("\nEstados validos:")
+verificador = verificadorAvSintatica(listaDeNos, maquina)
+print(verificador.estados[2].num)
+print(arvoreSintatica.listaNos[0].conteudo)
+verificador.preenchePilha(arvoreSintatica.listaNos)
 
 
 

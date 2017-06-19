@@ -16,31 +16,46 @@ class maqEstados(object):
 		if (totLinhas <= 0) or (totLinhas != (len(arqArray) - 2)): # Confere integridade da máquina
 			return False
 
-		listaPropriedades = []
 		matrizProps = []
-		listaProxEstad = []
 		matrizEstados = []
 		estados = []
 
 		for i in range(0, totLinhas):
+			listaProxEstad = []
+			listaPropriedades = []
 			totProps = arqArray[i+1][2]
 			indexBase = (2*(int(totProps) + 1))
-			totProxEstad = arqArray[i+1][indexBase + 2]
+			pIndex = 4			
+
+			if (totProps == '0'):
+				listaPropriedades = None;
+				
+			else:				
+				for j in range(0, int(totProps)):
+					param = []
+					param.append(arqArray[i+1][pIndex])
+					while (arqArray[i+1][pIndex + 1] != ' '):
+						pIndex += 1
+						param.append(arqArray[i+1][pIndex])
+					param = ''.join(param)
+					listaPropriedades.append(param)
+					pIndex += 2			
+
+			totProxEstad = arqArray[i+1][pIndex]
 			
 			# As propriedades da maquina de estados sao preenchidas conforme a posicao
-			# das informacoes no arquivo de entrada
-
-			if (totProps == 0):
-				listaPropriedades = 'None';
-			else:
-				listaPropriedades = (arqArray[i+1][4:(indexBase + 1)]).split(' ')	
+			# das informacoes no arquivo de entrada	
 
 			if (totProxEstad == 0):
-				listaProxEstad = 'None';
+				listaProxEstad = None;
 			else:
-				listaProxEstad = (arqArray[i+1][(indexBase + 4):(indexBase + (2*int(totProxEstad) + 3))]).split(' ')
+				listaProxEstad = (arqArray[i+1][(pIndex + 2):(pIndex + (2*int(totProxEstad) + 3))]).split(' ')
+				if (len(listaProxEstad) > int(totProxEstad)): # Corta espaços extras
+					listaProxEstad = listaProxEstad[:int(totProxEstad)]
+				print("AA: ",arqArray[i+1][(pIndex + 2):(pIndex + (2*int(totProxEstad) + 3))], "B")
+				
 				for j in listaProxEstad:
-					if (int(j) > totLinhas): 
+					if (int(j) > totLinhas): # Checa se há estados acima do permitido
 						return False
 
 			matrizProps.append(listaPropriedades)		

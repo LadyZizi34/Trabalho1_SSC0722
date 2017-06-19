@@ -1,6 +1,8 @@
-4
-1 2 p q 2 2 3
-2 2 p r 2 2 4
-3 2 q r 1 1
-4 1 q 1 4
-(AF((EX(q))->(AF(p))))
+6
+1 3 alive chase flee 2 2 4
+2 3 alive eat flee 4 1 2 3 5
+3 0 2 1 6
+4 3 alive move chase 1 1 
+5 4 alive eat move flee 1 2
+6 1 move 1 3
+((flee)->(eat))

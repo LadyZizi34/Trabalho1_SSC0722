@@ -15,193 +15,108 @@ class verificadorAvSintatica(object):
 		pilhaFinal = []
 		atual = treeNode()
 
-		print("Raiz:", lista[len(lista)-1].conteudo)
-
 		pilhaTemp.append(lista[len(lista)-1]) # Insere nó raiz
-		print(pilhaTemp)
 
-		print("Lista 0:",lista[0].conteudo)
 	# Primeiramente deve-se construir uma pilha onde
 	# o nó raiz esteja na base e os nós folha, no topo.
 	# Assim, será possível realizar a marcação 'de baixo
 	# para cima'
 		while pilhaTemp:
-			print("Lista:", pilhaTemp)
-			print("pop:", pilhaTemp[0])
 			atual = pilhaTemp.pop()
-			print("atual: ", atual)
-			print("Lista:", pilhaTemp)
-			print("atual.conteudo:",atual.conteudo)
 			pilhaFinal.append(atual)
-			if atual.left:
-				print("left:", atual.left)
+			if atual.left:				
 				pilhaTemp.append(atual.left)
-			if atual.right:
-				print("right:", atual)
+			if atual.right:				
 				pilhaTemp.append(atual.right)
-
-		print("A lista nova")
-		for i in (range(0, int(len(pilhaFinal)))):
-			print (pilhaFinal[i].conteudo)
 
 		while pilhaFinal:
 			atual = pilhaFinal[len(pilhaFinal)-1]
-			print("Content:",atual.conteudo)
 			if (atual.tipo == 'Op'):
 				if(atual.oper == "EX"):
-					self.ex(self.estados, atual.left.conteudo, atual.conteudo)
+					self.ex(atual.left.conteudo, atual.conteudo)
 				elif(atual.oper == "AF"):
-					self.af(self.estados, atual.left.conteudo, atual.conteudo)
+					self.af(atual.left.conteudo, atual.conteudo)
 				elif(atual.oper == "EU"):
-					self.eu(self.estados, atual.left.conteudo, atual.right.conteudo, atual.conteudo)					
+					self.eu(atual.left.conteudo, atual.right.conteudo, atual.conteudo)					
 				elif(atual.oper == "!"):
-					self.op_not(self.estados, atual.left.conteudo, atual.conteudo)
+					self.op_not(atual.left.conteudo, atual.conteudo)
 				elif(atual.oper == "&"):
-					self.op_and(self.estados, atual.left.conteudo, atual.right.conteudo, atual.conteudo)
+					self.op_and(atual.left.conteudo, atual.right.conteudo, atual.conteudo)
 				elif(atual.oper == "|"):
-					self.op_or(self.estados, atual.left.conteudo, atual.right.conteudo, atual.conteudo)
+					self.op_or(atual.left.conteudo, atual.right.conteudo, atual.conteudo)
 				else:
 					print("Máquina de Estados mal formada.")
-			else:
-				op_add(self.estados, atual.conteudo)
+			else:				
+				self.op_add(atual.conteudo) # Adiciona as propriedades às expressões válidas
 
 			pilhaFinal.pop()
 
-	def af(self, expLeft, exp):		
-		estadosParamValido = []
-		novaIteracao = 1
+
+	def ex(self, expLeft, exp): #entra quando encontra um rótulo. EXpar vai se tornar o novo parametro para eu analisar! 
+		for estado in self.estados:
+			estadoValido = False
+			if exp not in estado.expValidas:
+				estadoValido = True		
+			if expLeft in estado.proxEstados:				
+				if estadoValido:					
+					estado.expValidas.append(exp)					
+					break;
+
+	def af(self, expLeft, exp):				
+		novaIteracao = True
 
 		for estado in self.estados:
-			for prop in estado.props:
-				if(prop == parametro):
-					estadosParamValido.append(estado.num)
-					estado.props.append('AF'+parametro)
+			if expLeft in estado.expValidas:				
+				estado.expValidas.append(exp)
 		
-		while (novaIteracao == 1):
+		while (novaIteracao):
+			novaIteracao = False
 			for estado in self.estados:
-				estadoValido = 1
-				for proximo in estado.proxEstados:				
-					if (int(proximo) in estadosParamValido) and (estadoValido == 1):
-						estadoValido = 1														
-					else:
-						estadoValido = 0								
-				if (estadoValido == 1):	
-					estadosParamValido.append(estado.num)
-					estado.props.append('AF'+parametro)		
-					#novaIteracao = 1
-				else:
-					novaIteracao = 0			
+				estadoValido = True
+				if exp not in estado.expValidas:
+					estadoValido = True 
+					for proximo in estado.proxEstados:				
+						if exp not in proximo.expValidas:
+							estadoValido = False
+							break																						
+					if estadoValido and (not len(estado.proxEstados) == 0):	
+						estado.expValidas.append(exp)		
+						novaIteracao = True					
 
-		return True
-
-	def ag(parametro):          
-		estadosParamValido = []
-		novaIteracao = 1
+	def eu(self, expLeft, expRight, exp):
+		novaIteracao = True
 
 		for estado in self.estados:
-			for prop in estado.props:
-				if(prop == parametro):
-					estadosParamValido.append(estado.num)
-					estado.props.append('AG'+parametro)
-		
-		while (novaIteracao == 1):
-			for estado in self.estados:
-				for proximo in estado.proxEstados:				
-					if not (int(proximo) in estadosParamValido) and (estado.num in estadosParamValido):					
-						estadosParamValido.remove(estado.num)			
-						estado.props.remove('AG'+parametro)								
-						#novaIteracao = 1
-						#continue
-					else:
-						novaIteracao = 0
+			if expRight in estado.expValidas:				
+				estado.expValidas.append(exp)		
 
-		return True
-
-	def ax(parametro):  
-		estadosParamValido = []		
-
+		while (novaIteracao):
+			novaIteracao = False
+			for estado in self.estados:				
+				if ((expLeft in estado.expValidas) or expLeft == "TRUE") and (exp not in estado.expValidas):								
+					for proximo in estado.proxEstados:				
+						if exp in proximo.expValidas:						
+							estado.expValidas.append(exp)		
+							novaIteracao = True								
+							break
+				
+	def op_not(self, expLeft, exp):
 		for estado in self.estados:
-			for prop in estado.props:
-				if(prop == parametro):
-					estadosParamValido.append(estado.num)			
-		
-		for estado in self.estados:		
-			estadoValido = 1				
-			for proximo in estado.proxEstados:							
-				if (int(proximo) in estadosParamValido) and (estadoValido == 1):
-					estadoValido = 1														
-				else:
-					estadoValido = 0			
-			if (estadoValido == 1):	
-				estado.props.append('AX'+parametro)																	 
+			if expLeft not in estado.expValidas:
+				estado.expValidas.append(exp)
 
-		return True
-		
-	def au(parametro):
-		print('Propriedade não implementada')		           
-		return True
-
-	def ef(parametro): 
-		estadosParamValido = []
-		novaIteracao = 1
-
+	def op_and(self, expLeft, expRight, exp):
 		for estado in self.estados:
-			for prop in estado.props:
-				if(prop == parametro):
-					estadosParamValido.append(estado.num)
-					estado.props.append('EF'+parametro)
-		
-		while (novaIteracao == 1):
-			for estado in self.estados:
-				for proximo in estado.proxEstados:				
-					if(int(proximo) in estadosParamValido):
-						estadosParamValido.append(estado.num)
-						estado.props.append('AF'+parametro)		
-						#novaIteracao = 1				
-						#continue
-					else:
-						novaIteracao = 0
-
-		return True
-
-	def eg(parametro):      
-		estadosParamValido = []
-		novaIteracao = 1
-
+			if (expLeft in estado.expValidas) and (expRight in estado.expValidas):
+				estado.expValidas.append(exp)
+	
+	def op_or(self, expLeft, expRight, exp):
 		for estado in self.estados:
-			for prop in estado.props:
-				if(prop == parametro):
-					estadosParamValido.append(estado.num)
-					estado.props.append('EG'+parametro)
-		
-		while (novaIteracao == 1):
-			for estado in self.estados:
-				estadoValido = 0 # só tiro o estado se nenhum caminho chegar
-				for proximo in estado.proxEstados:				
-					if not (int(proximo) in estadosParamValido) and (estado.num in estadosParamValido) and (estadoValido == 0):					
-						estadoValido = 0														
-					else:
-						estadoValido = 1
-				if (estadoValido == 0):
-					estadosParamValido.remove(estado.num)			
-					estado.props.remove('EG'+parametro)			
-				else:
-					novaIteracao = 0
+			if (expLeft in estado.expValidas) or (expRight in estado.expValidas):
+				estado.expValidas.append(exp)			
 
-		return True
+	def op_add(self, exp):
+		for estado in self.estados:					
+			if exp in estado.props:								
+				estado.expValidas.append(exp)
 
-	def ex(parametro): #entra quando encontra um rótulo. EXpar vai se tornar o novo parametro para eu analisar! 
-		estadosParamValido = []
-
-		for estado in self.estados:
-			for prop in estado.props:
-				if(prop == parametro):
-					estadosParamValido.append(estado.num)
-		
-		for estado in self.estados:
-			for proximo in estado.proxEstados:				
-				if(int(proximo) in estadosParamValido):					
-					estado.props.append('EX'+parametro)					
-					#continue
-
-		return True		

@@ -1,5 +1,13 @@
 # coding: utf-8
 
+class Estado(object):
+
+	def __init__(self, num, props, proxEstados):
+		self.num = num
+		self.props = props
+		self.proxEstados = proxEstados
+		self.expValidas = []
+
 class maqEstados(object):
 
 	def __init__(self):
@@ -28,7 +36,7 @@ class maqEstados(object):
 			pIndex = 4			
 
 			if (totProps == '0'):
-				listaPropriedades = None;
+				listaPropriedades = [];
 				
 			else:				
 				for j in range(0, int(totProps)):
@@ -47,7 +55,7 @@ class maqEstados(object):
 			# das informacoes no arquivo de entrada	
 
 			if (totProxEstad == 0):
-				listaProxEstad = None;
+				listaProxEstad = [];
 			else:
 				listaProxEstad = (arqArray[i+1][(pIndex + 2):(pIndex + (2*int(totProxEstad) + 3))]).split(' ')
 				if (len(listaProxEstad) > int(totProxEstad)): # Corta espaços extras
@@ -79,10 +87,5 @@ class maqEstados(object):
 		return True
 
 
-class Estado(object):
 
-	def __init__(self, num, props, proxEstados):
-		self.num = num
-		self.props = props
-		self.proxEstados = proxEstados
 

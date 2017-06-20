@@ -40,9 +40,14 @@ for i in reversed(range(0, int(len(arvoreSintatica.listaNos)))):
 
 print("\nEstados validos:")
 verificador = verificadorAvSintatica(listaDeNos, maquina)
-print(verificador.estados[2].num)
-print(arvoreSintatica.listaNos[0].conteudo)
+#print(verificador.estados[2].num)
+#print(arvoreSintatica.listaNos[0].conteudo)
 verificador.preenchePilha(arvoreSintatica.listaNos)
 
+for estado in maquina.listaEstados:
+	if expressaoEquivalente in estado.expValidas:
+		print(estado.num, end=" ")
+
+print("")
 
 
